@@ -48,3 +48,22 @@ tests_flashprog: tests
 
 clean: demo_clean tests_clean wmsdk_clean 
 
+
+
+rheem: wmsdk 
+	$(AT)$(MAKE) -C $(WMSDK_BUNDLE_DIR) APP=$(PROJECT_ROOT)/apps/rheem
+
+rheem_clean:
+	$(AT)$(MAKE) -C $(WMSDK_BUNDLE_DIR) APP=$(PROJECT_ROOT)/apps/rheem clean
+
+rheem_flashprog: demo
+	cd $(WMSDK_PATH)/tools/OpenOCD; \
+	sudo ./flashprog.py --$(BOARD_FW_PARTITION) $(WMSDK_BUNDLE_DIR)/bin/mw300_defconfig/mw300_rd/rheem_demo.bin \
+
+rheem_ramload: rheem
+	cd $(WMSDK_PATH)/tools/OpenOCD; \
+	sudo ./ramload.sh $(PROJECT_ROOT)/apps/rheem/bin/rheem_demo.axf \
+
+rheem_footprint:
+	$(AT)$(WMSDK_BUNDLE_DIR)/wmsdk/tools/bin/footprint.pl -m apps/rheem/bin/rheem_demo.map
+
